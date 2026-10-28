@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Six-year profit model comparing Talavane (India) and Harlow Springs (Ohio) for the Northline Ontario windshield program.">
+<title>Solvara Ontario Calculator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Source+Serif+4:wght@600;700&display=swap">
+<style>
+/* Layout: control rail on the left, verdict + six-year results on the right; stacks on phones */
+:root{
+  --bg:#F2F4F3; --panel:#FBFCFB; --ink:#12262E; --muted:#52626A; --line:#D5DDDA;
+  --india:#1F6F8B; --india-soft:#DCEAEE; --ohio:#A84C15; --ohio-soft:#F3E3D7;
+  --good:#2D7A4B; --bad:#B23A2E;
+  --display:'Source Serif 4', Georgia, serif; --body:'IBM Plex Sans', Arial, sans-serif; --mono:'IBM Plex Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1C21; --panel:#162830; --ink:#E8EEEC; --muted:#9FB1B6; --line:#2C434C;
+  --india:#6FB3CC; --india-soft:#1C3A45; --ohio:#E39A66; --ohio-soft:#3D2A1E;
+  --good:#6CC28E; --bad:#F08A7E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1C21; --panel:#162830; --ink:#E8EEEC; --muted:#9FB1B6; --line:#2C434C;
+  --india:#6FB3CC; --india-soft:#1C3A45; --ohio:#E39A66; --ohio-soft:#3D2A1E;
+  --good:#6CC28E; --bad:#F08A7E; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:28px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+header h1{font-family:var(--display);font-size:clamp(26px,4vw,36px);line-height:1.15;margin:0;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);max-width:68ch}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--india)}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.rail{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel h2{font-size:14px;margin:0;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13px var(--body);border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chip:hover{border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,.seg button:focus-visible,input:focus-visible{outline:2px solid var(--india);outline-offset:2px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field .top{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.field .top span:first-child{color:var(--muted)}
+.field output{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:500 13px var(--body);border:0;background:transparent;color:var(--ink);padding:8px 6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--india);color:var(--panel)}
+.note{font-size:12px;color:var(--muted);margin:0}
+.main{display:flex;flex-direction:column;gap:20px;min-width:0}
+.verdict{border-radius:12px;padding:20px 22px;background:var(--ink);color:var(--bg);display:flex;flex-direction:column;gap:4px}
+.verdict .big{font-family:var(--display);font-size:clamp(22px,3vw,30px);line-height:1.2;text-wrap:balance}
+.verdict .small{opacity:.8;font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:520px){.tiles{grid-template-columns:1fr}}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;border-top:4px solid var(--c)}
+.tile .lbl{font-size:13px;color:var(--muted)}
+.tile .num{font-family:var(--display);font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c)}
+.tile dl{display:grid;grid-template-columns:1fr auto;gap:2px 12px;margin:4px 0 0;font-size:13px}
+.tile dt{color:var(--muted)} .tile dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h3{margin:0;font-size:14px}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;min-width:560px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--muted);font-size:12px}
+tfoot td{font-weight:700;border-bottom:0}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.flags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.flags{grid-template-columns:1fr}}
+.flag{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.flag b{font-family:var(--mono);font-size:16px;font-variant-numeric:tabular-nums}
+.flag span{font-size:12px;color:var(--muted)}
+svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.bar{transition:height .25s, y .25s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Northline Ontario program · 850,000 sets, 6 years</div>
+  <h1>Talavane or Harlow Springs: test the six-year economics</h1>
+  <p>Move the freight, duty and learning assumptions and see where each plant lands. Defaults are the recommended case: Talavane shipped in-bond to Canada, against Ohio learning at India’s pace.</p>
+</header>
+
+<div class="grid">
+<div class="rail">
+  <section class="panel" aria-labelledby="h-india">
+    <h2 id="h-india"><span class="dot" style="background:var(--india)"></span>Talavane, India</h2>
+    <div class="chips" id="indiaPresets">
+      <button class="chip" data-p="rec">Recommended (in-bond)</button>
+      <button class="chip" data-p="base">Base, entered</button>
+      <button class="chip" data-p="peak">2024 freight peak</button>
+      <button class="chip" data-p="ad">12.4% anti-dumping</button>
+      <button class="chip" data-p="d25">25% duty</button>
+    </div>
+    <div class="field">
+      <div class="top"><span>Customs route</span></div>
+      <div class="seg" role="group" aria-label="Customs route">
+        <button id="routeEntered" type="button">Entered into US</button>
+        <button id="routeBond" type="button">In-bond to Canada</button>
+      </div>
+    </div>
+    <div class="field"><div class="top"><span>Container rate, door to door</span><output id="o-freight"></output></div>
+      <input id="freight" type="range" min="3000" max="20000" step="100" aria-label="Container rate"></div>
+    <div class="field"><div class="top"><span>US duty if entered (4% today)</span><output id="o-duty"></output></div>
+      <input id="duty" type="range" min="0" max="40" step="0.1" aria-label="US duty rate"></div>
+    <div class="field"><div class="top"><span>In-bond cost per set</span><output id="o-bond"></output></div>
+      <input id="bond" type="range" min="0" max="2" step="0.05" aria-label="In-bond cost per set"></div>
+    <div class="field"><div class="top"><span>Indian wage growth a year</span><output id="o-wage"></output></div>
+      <input id="wage" type="range" min="0" max="20" step="0.5" aria-label="Indian wage growth"></div>
+    <div class="field"><div class="top"><span>Years from 2026 to launch</span><output id="o-launch"></output></div>
+      <input id="launch" type="range" min="0" max="4" step="1" aria-label="Years to launch"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-ohio">
+    <h2 id="h-ohio"><span class="dot" style="background:var(--ohio)"></span>Harlow Springs, Ohio</h2>
+    <div class="chips" id="ohioPresets">
+      <button class="chip" data-p="today">Today (80%)</button>
+      <button class="chip" data-p="trend">Own trend</button>
+      <button class="chip" data-p="learned">India-style learning</button>
+    </div>
+    <div class="field"><div class="top"><span>Overall yield at launch</span><output id="o-oy"></output></div>
+      <input id="oy" type="range" min="70" max="97" step="1" aria-label="Ohio yield at launch"></div>
+    <div class="field"><div class="top"><span>Yield gain a year after launch</span><output id="o-oyg"></output></div>
+      <input id="oyg" type="range" min="0" max="3" step="0.1" aria-label="Ohio yield gain per year"></div>
+    <div class="field"><div class="top"><span>Gross sets per shift</span><output id="o-oout"></output></div>
+      <input id="oout" type="range" min="550" max="850" step="10" aria-label="Ohio sets per shift"></div>
+    <div class="field"><div class="top"><span>Output gain a year</span><output id="o-ooutg"></output></div>
+      <input id="ooutg" type="range" min="0" max="20" step="1" aria-label="Ohio output gain per year"></div>
+    <div class="field"><div class="top"><span>Workers per line</span><output id="o-ow"></output></div>
+      <input id="ow" type="range" min="45" max="65" step="1" aria-label="Ohio workers per line"></div>
+    <p class="note">Ohio wages, power and freight held at case values. Depreciation scales with good output.</p>
+  </section>
+</div>
+
+<div class="main">
+  <div class="verdict" aria-live="polite">
+    <div class="big" id="verdict"></div>
+    <div class="small" id="verdictSub"></div>
+  </div>
+  <div class="tiles">
+    <div class="tile" style="--c:var(--india)">
+      <div class="lbl">Talavane, six-year profit</div><div class="num" id="tI"></div>
+      <dl><dt>Delivered cost, year 4</dt><dd id="cI"></dd><dt>Margin, year 4</dt><dd id="mI"></dd><dt>Stoppage hours it absorbs</dt><dd id="hI"></dd></dl>
+    </div>
+    <div class="tile" style="--c:var(--ohio)">
+      <div class="lbl">Harlow Springs, six-year profit</div><div class="num" id="tO"></div>
+      <dl><dt>Delivered cost, year 4</dt><dd id="cO"></dd><dt>Margin, year 4</dt><dd id="mO"></dd><dt>Labour per set, year 4</dt><dd id="lO"></dd></dl>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Profit by program year, US$ millions</h3>
+    <div class="legend"><span><span class="dot" style="background:var(--india)"></span> Talavane</span><span><span class="dot" style="background:var(--ohio)"></span> Harlow Springs</span></div>
+    <div class="scroll"><svg id="chart" viewBox="0 0 720 260" width="100%" role="img" aria-label="Yearly profit by plant"></svg></div>
+  </div>
+  <div class="card">
+    <h3>What would flip the answer</h3>
+    <div class="flags">
+      <div class="flag"><b id="fFreight"></b><span>Container rate that zeroes Talavane’s year-4 margin</span></div>
+      <div class="flag"><b id="fDuty"></b><span>Entered US duty that zeroes Talavane’s year-4 margin</span></div>
+      <div class="flag"><b id="fCross"></b><span>Entered US duty at which this Ohio case beats Talavane</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Year by year</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Year</th><th>Sets</th><th>Price</th><th>India cost</th><th>India profit</th><th>Ohio cost</th><th>Ohio profit</th></tr></thead>
+      <tbody id="rows"></tbody>
+      <tfoot><tr><td>Total</td><td id="totSets"></td><td></td><td></td><td id="totI"></td><td></td><td id="totO"></td></tr></tfoot>
+    </table></div>
+    <p class="note">Sources: case Exhibits 2–4 (costs), 3 (operating data), 8 (freight), 9 (program terms), 10 (duty, on $45 declared value). Launch timing, in-bond cost and Ohio learning paths are assumptions.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+/*MODEL-START*/
+const VOL=[60000,180000,180000,180000,180000,70000];
+const PRICE=[50,48.75,47.53,46.34,46.34,46.34];
+function indiaCost(i,s){
+  const good=780*0.93;
+  const wageDay=38000/84/25*Math.pow(1+s.wage/100,s.launch+i);
+  const lab=58*wageDay/good;
+  const duty=s.route==='bond'?s.bond:45*s.duty/100;
+  const logi=2.75+2.40+s.freight/1200+duty+1.15;
+  return {total:13.40+lab+1.70+1.60+0.90+5.80+logi,lab};
+}
+function ohioCost(i,s){
+  const y=Math.min(0.99,(s.oy+s.oyg*i)/100), out=s.oout+s.ooutg*i, good=out*y;
+  const lab=s.ow*25.5*8/good;
+  const total=15.60/y+lab+16.23*0.07/y+1.44/y+1716/good+7.90+2.23;
+  return {total,lab};
+}
+function program(s){
+  const yrs=VOL.map((v,i)=>{const ci=indiaCost(i,s),co=ohioCost(i,s);
+    return {v,p:PRICE[i],ci:ci.total,co:co.total,pi:v*(PRICE[i]-ci.total),po:v*(PRICE[i]-co.total),lo:co.lab};});
+  return {yrs,I:yrs.reduce((a,r)=>a+r.pi,0),O:yrs.reduce((a,r)=>a+r.po,0)};
+}
+/*MODEL-END*/
+const $=id=>document.getElementById(id);
+const S={route:'bond',freight:7800,duty:4,bond:0.30,wage:11,launch:3,oy:95,oyg:0,oout:800,ooutg:0,ow:52};
+const IP={rec:{route:'bond',freight:7800,duty:4},base:{route:'entered',freight:7800,duty:4},peak:{route:'entered',freight:9600,duty:4},ad:{route:'entered',freight:7800,duty:16.4},d25:{route:'entered',freight:7800,duty:29}};
+const OP={today:{oy:80,oyg:0,oout:650,ooutg:0,ow:62},trend:{oy:84,oyg:0.6,oout:670,ooutg:6,ow:62},learned:{oy:95,oyg:0,oout:800,ooutg:0,ow:52}};
+const fmt={freight:v=>'$'+v.toLocaleString('en-US'),duty:v=>v.toFixed(1)+'%',bond:v=>'$'+v.toFixed(2),wage:v=>v+'%',launch:v=>v+(v===1?' year':' years'),
+  oy:v=>v+'%',oyg:v=>'+'+v.toFixed(1)+' pts',oout:v=>v,ooutg:v=>'+'+v,ow:v=>v};
+const keys=Object.keys(fmt);
+const M=v=>(v<0?'–$':'+$')+Math.abs(v/1e6).toFixed(1)+'M';
+const D=v=>'$'+v.toFixed(2);
+function sync(){
+  keys.forEach(k=>{$(k).value=S[k];$('o-'+k).textContent=fmt[k](S[k]);});
+  $('routeEntered').setAttribute('aria-pressed',S.route==='entered');
+  $('routeBond').setAttribute('aria-pressed',S.route==='bond');
+  $('duty').disabled=false; $('bond').disabled=S.route!=='bond';
+  document.querySelectorAll('#indiaPresets .chip').forEach(b=>{const p=IP[b.dataset.p];b.setAttribute('aria-pressed',p.route===S.route&&p.freight===S.freight&&p.duty===S.duty);});
+  document.querySelectorAll('#ohioPresets .chip').forEach(b=>{const p=OP[b.dataset.p];b.setAttribute('aria-pressed',Object.keys(p).every(k=>p[k]===S[k]));});
+  render();
+}
+function solve(f,lo,hi){ // find x where f(x) crosses 0 going negative
+  if(f(lo)<=0) return lo; if(f(hi)>0) return null;
+  for(let n=0;n<60;n++){const m=(lo+hi)/2; if(f(m)>0) lo=m; else hi=m;} return (lo+hi)/2;
+}
+function render(){
+  const r=program(S), y4=r.yrs[3];
+  $('tI').textContent=M(r.I); $('tO').textContent=M(r.O);
+  $('cI').textContent=D(y4.ci); $('mI').textContent=D(y4.p-y4.ci);
+  $('hI').textContent=r.I>0?Math.round(r.I/22000).toLocaleString('en-US')+' h':'none';
+  $('cO').textContent=D(y4.co); $('mO').textContent=D(y4.p-y4.co); $('lO').textContent=D(y4.lo);
+  const diff=r.I-r.O, win=diff>=0?'Talavane':'Harlow Springs';
+  $('verdict').textContent=`${win} wins by $${Math.abs(diff/1e6).toFixed(1)}M over the program`;
+  $('verdictSub').textContent=(r.I<0&&r.O<0)?'Neither plant makes money on these assumptions.':
+    `Route: ${S.route==='bond'?'in-bond to Canada, no US duty':'entered into the US at '+S.duty.toFixed(1)+'% duty'} · freight ${fmt.freight(S.freight)} per container`;
+  // flip points
+  const f1=solve(x=>PRICE[3]-indiaCost(3,{...S,freight:x}).total,3000,60000);
+  $('fFreight').textContent=f1?'$'+Math.round(f1/100)*100+' / box':'never';
+  const f2=solve(x=>PRICE[3]-indiaCost(3,{...S,route:'entered',duty:x}).total,0,200);
+  $('fDuty').textContent=f2===null?'above 200%':f2.toFixed(1)+'%';
+  const f3=solve(x=>program({...S,route:'entered',duty:x}).I-r.O,0,200);
+  $('fCross').textContent=f3===null?'never':f3.toFixed(1)+'%';
+  // table
+  $('rows').innerHTML=r.yrs.map((y,i)=>`<tr><td>${i+1}</td><td>${y.v.toLocaleString('en-US')}</td><td>${y.p.toFixed(2)}</td><td>${y.ci.toFixed(2)}</td><td class="${y.pi<0?'neg':'pos'}">${(y.pi/1e6).toFixed(2)}</td><td>${y.co.toFixed(2)}</td><td class="${y.po<0?'neg':'pos'}">${(y.po/1e6).toFixed(2)}</td></tr>`).join('');
+  $('totSets').textContent='850,000';
+  $('totI').textContent=(r.I/1e6).toFixed(2); $('totI').className=r.I<0?'neg':'pos';
+  $('totO').textContent=(r.O/1e6).toFixed(2); $('totO').className=r.O<0?'neg':'pos';
+  drawChart(r.yrs);
+}
+function drawChart(yrs){
+  const W=720,H=260,L=48,R=12,T=14,B=30, vals=yrs.flatMap(y=>[y.pi/1e6,y.po/1e6]);
+  let mx=Math.max(0.5,...vals), mn=Math.min(0,...vals);
+  const step=niceStep((mx-mn)/5); mx=Math.ceil(mx/step)*step; mn=Math.floor(mn/step)*step;
+  const sy=v=>T+(mx-v)/(mx-mn)*(H-T-B), z=sy(0), bw=(W-L-R)/6;
+  let s='';
+  for(let v=mn;v<=mx+1e-9;v+=step){const yy=sy(v);s+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width="1"/><text x="${L-6}" y="${yy+4}" text-anchor="end">${v.toFixed(step<1?1:0)}</text>`;}
+  yrs.forEach((y,i)=>{const x=L+i*bw+bw*0.18, w=bw*0.3;
+    [[y.pi/1e6,'var(--india)',0],[y.po/1e6,'var(--ohio)',1]].forEach(([v,c,k])=>{const y1=Math.min(sy(v),z),h=Math.max(1,Math.abs(sy(v)-z));
+      s+=`<rect class="bar" x="${x+k*(w+4)}" y="${y1}" width="${w}" height="${h}" fill="${c}" rx="2"/>`;});
+    s+=`<text x="${L+i*bw+bw/2}" y="${H-10}" text-anchor="middle">Year ${i+1}</text>`;});
+  s+=`<line x1="${L}" x2="${W-R}" y1="${z}" y2="${z}" stroke="var(--ink)" stroke-width="1.5"/>`;
+  $('chart').innerHTML=s;
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x))),n=x/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p;}
+keys.forEach(k=>$(k).addEventListener('input',e=>{S[k]=parseFloat(e.target.value);sync();}));
+$('routeEntered').onclick=()=>{S.route='entered';sync();};
+$('routeBond').onclick=()=>{S.route='bond';sync();};
+document.querySelectorAll('#indiaPresets .chip').forEach(b=>b.onclick=()=>{Object.assign(S,IP[b.dataset.p]);sync();});
+document.querySelectorAll('#ohioPresets .chip').forEach(b=>b.onclick=()=>{Object.assign(S,OP[b.dataset.p]);sync();});
+sync();
+</script>
+</body>
+</html>
